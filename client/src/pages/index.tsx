@@ -4,6 +4,7 @@ import {
 } from "react-router-dom";
 import AppRoutes from "../routes";
 
+
 const App = () => {
     useEffect(() => {
         document.title = 'Welcome | Absence Manager';
