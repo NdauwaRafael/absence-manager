@@ -6,13 +6,14 @@ import Home from "../pages/Home";
 
 const AppRoutes = () => (
     <Routes>
-        <Route element={<AuthRoute redirectPath='/home'/>}>
-            <Route path="/" element={<Login/>}/>
-            <Route path="/login" element={<Login/>}/>
-        </Route>
-        <Route element={<PrivateRoute redirectPath='/login'/>}>
-            <Route path="/home" element={<Home/>}/>
-        </Route>
+        <Route path="/" element={<Home/>}/>
+        {/*<Route element={<AuthRoute redirectPath='/home'/>}>*/}
+        {/*    <Route path="/" element={<Login/>}/>*/}
+        {/*    <Route path="/login" element={<Login/>}/>*/}
+        {/*</Route>*/}
+        {/*<Route element={<PrivateRoute redirectPath='/login'/>}>*/}
+        {/*    <Route path="/home" element={<Home/>}/>*/}
+        {/*</Route>*/}
     </Routes>
 );
 

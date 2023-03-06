@@ -1,8 +1,9 @@
 import assert from 'assert';
 import { members, absences } from './api';
+import {describe, it} from "node:test";
 
-const everyItemContainsKey = (key) => (collection) =>
-  collection.forEach((item) => assert(Object.keys(item).includes(key)));
+const everyItemContainsKey = (key: string) => (collection: {}[]) =>
+  collection.forEach((item: {}) => assert(Object.keys(item).includes(key)));
 
 describe('members', () => {
   describe('every member has key', () => {
