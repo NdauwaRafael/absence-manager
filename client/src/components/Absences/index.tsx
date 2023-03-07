@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, {useState, Fragment} from "react";
 import {useAbsences} from "../../hooks/useAbsences";
 import {truncateString} from "../../utils/helpers";
 
 const filters = ['sickness', 'vacation'];
 export default function Home() {
-    const absencesQuery  = useAbsences(1, 5);
+    const [page, setPage] = useState(1);
     const [filterOpen, setFilterOpen] = useState(false);
     const [selectedFilterType, setSelectedFilterType] = useState('');
     const [selectedFilter, setSelectedFilter] = useState({
@@ -15,9 +15,16 @@ export default function Home() {
         }
     });
 
-    const { isLoading, error, data: absences } = absencesQuery
+    const {
+        isLoading,
+        isError,
+        error,
+        data: absences,
+        isFetching
+    } = useAbsences(page);
 
-    console.log(absencesQuery?.isPreviousData)
+
+
 
     return (
         <>
@@ -25,7 +32,7 @@ export default function Home() {
                 <div className="flex items-center justify-between py-4 bg-white dark:bg-gray-800">
                     <div className="relative">
                         <button
-                            onClick={()=>setFilterOpen(!filterOpen)}
+                            onClick={() => setFilterOpen(!filterOpen)}
                             className="capitalize inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             type="button">
                             <span className="sr-only">Action button</span>
@@ -45,12 +52,13 @@ export default function Home() {
                             <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                                 <li>
                                     {
-                                        filters.map((filter, index: number)=>(
-                                            <a onClick={()=>{
+                                        filters.map((filter, index: number) => (
+                                            <a onClick={() => {
                                                 setSelectedFilterType(filter);
                                                 setFilterOpen(false)
                                             }}
-                                                key={`filter-${index}`} className="capitalize block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{filter}</a>
+                                               key={`filter-${index}`}
+                                               className="capitalize block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{filter}</a>
                                         ))
                                     }
                                 </li>
@@ -144,14 +152,30 @@ export default function Home() {
 
                 <div className="mt-3 flex items-center mb-10">
 
-                    <a href="#" className="inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                        <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd"></path></svg>
+                    <button
+                        disabled={page===1 || isFetching}
+                        onClick={() => setPage(prevState => Math.max(prevState - 1, 0))}
+                        className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd"
+                                  d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                                  clipRule="evenodd"></path>
+                        </svg>
                         Previous
-                    </a>
-                    <a href="#" className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    </button>
+                    <button
+                        onClick={() => setPage(prevState => prevState + 1)}
+                        disabled={isFetching || page === absences.pages}
+                        className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Next
-                        <svg aria-hidden="true" className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                    </a>
+                        <svg aria-hidden="true" className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd"
+                                  d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                  clipRule="evenodd"></path>
+                        </svg>
+                    </button>
 
                 </div>
             </div>

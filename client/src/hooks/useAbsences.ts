@@ -1,10 +1,24 @@
-import {useQuery} from "react-query";
+import {useInfiniteQuery, useQuery} from "react-query";
 import axios from "axios";
 import {endpoint} from "../config";
 
-export const useAbsences = (page= 1, pageSize=10)=>{
+export const useAbsences = (page= 1, pageSize=5)=>{
     return useQuery(['absences', page], async ()=>{
-        return axios.get(`${endpoint}/api/absences?page=${1}&pageSize=${pageSize}`)
+        return axios.get(`${endpoint}/api/absences?page=${page}&pageSize=${pageSize}`)
             .then(res=>res.data);
-    }, { keepPreviousData : true, retry: 5 })
+    }, { keepPreviousData : true, retry: 5  })
+}
+
+export const useAbsencesInfinite = () => {
+    const fetchAbsences = async ({ pageParam = 1,  pageSize=5}) => {
+        return axios.get(`${endpoint}/api/absences?page=${pageParam}&pageSize=${pageSize}`)
+            .then(res=>res.data);
+    }
+
+    return useInfiniteQuery('absences', fetchAbsences, {
+        getNextPageParam: (lastPage, pages) => {
+            console.log(lastPage, "lastPage");
+            return lastPage.info.page + 1
+        }
+    });
 }
