@@ -3,7 +3,9 @@ import {
     BrowserRouter as Router
 } from "react-router-dom";
 import AppRoutes from "../routes";
+import {QueryClient, QueryClientProvider} from 'react-query'
 
+const queryClient = new QueryClient()
 
 const App = () => {
     useEffect(() => {
@@ -13,11 +15,13 @@ const App = () => {
     return (
         <Router>
             <>
-                {/*<Header/>*/}
-                <main className="mt-5 min-h-screen pt-10 flex-1">
-                    <AppRoutes/>
-                </main>
-                {/*<Footer />*/}
+                <QueryClientProvider client={queryClient}>
+                    {/*<Header/>*/}
+                    <main className="mt-5 min-h-screen pt-10 flex-1">
+                        <AppRoutes/>
+                    </main>
+                    {/*<Footer />*/}
+                </QueryClientProvider>
             </>
 
 
