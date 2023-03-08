@@ -3,6 +3,7 @@ import {useAbsences} from "../../hooks/useAbsences";
 import {truncateString} from "../../utils/helpers";
 import DatePicker, {DayValue, DayRange, Day} from '@hassanmojab/react-modern-calendar-datepicker';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import ListLoader from "../ListLoader";
 
 const absence_types = ['all', 'sickness', 'vacation'];
 
@@ -10,13 +11,6 @@ interface IFilter {
     startDate?: Date | null; // optional string property for startDate
     endDate?: Date | null; // optional string property for endDate
     type?: string | null; // optional array of string for types
-}
-
-interface Props {
-    startDate: DayValue | null;
-    endDate: DayValue | null;
-    setStartDate: (date: DayValue | null) => void;
-    setEndDate: (date: DayValue | null) => void;
 }
 
 export default function Home() {
@@ -60,6 +54,9 @@ export default function Home() {
         })();
 
     }, [filters, dayRange, page])
+
+    if (isFetching) return <><ListLoader /></>
+    if (error) return <>Error: {error?.message}</>
 
     return (
         <>
@@ -126,6 +123,10 @@ export default function Home() {
                                className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                placeholder="Search for users"/>
                     </div>
+                </div>
+
+                <div className="mb-3 text-gray-400">
+                    Displaying {absences?.data?.length} of {absences?.total} absentees.
                 </div>
 
                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

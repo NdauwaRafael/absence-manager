@@ -50,9 +50,11 @@
     ]
   },
   "devDependencies": {
+    "@types/enzyme": "^3.10.12",
     "@types/react-datepicker": "^4.10.0",
     "@types/styled-components": "^5.1.26",
     "autoprefixer": "^10.4.13",
+    "enzyme": "^3.11.0",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"
   }
