@@ -1,19 +1,46 @@
 import React, {useState, Fragment} from "react";
 import {useAbsences} from "../../hooks/useAbsences";
 import {truncateString} from "../../utils/helpers";
+import DatePicker, {DayValue, DayRange, Day} from '@hassanmojab/react-modern-calendar-datepicker';
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 
-const filters = ['sickness', 'vacation'];
+const absence_types = ['all', 'sickness', 'vacation'];
+
+interface IFilter {
+    startDate?: Date | null; // optional string property for startDate
+    endDate?: Date | null; // optional string property for endDate
+    type?: string | null; // optional array of string for types
+}
+
+interface Props {
+    startDate: DayValue | null;
+    endDate: DayValue | null;
+    setStartDate: (date: DayValue | null) => void;
+    setEndDate: (date: DayValue | null) => void;
+}
+
 export default function Home() {
     const [page, setPage] = useState(1);
     const [filterOpen, setFilterOpen] = useState(false);
-    const [selectedFilterType, setSelectedFilterType] = useState('');
-    const [selectedFilter, setSelectedFilter] = useState({
-        type: null,
-        dates: {
-            start: null,
-            end: null
-        }
+    const [filters, setFilters] = useState<IFilter>({
+        startDate: null,
+        endDate: null,
+        type: 'all'
     });
+    const [dayRange, setDayRange] = useState<DayRange>({
+        from: null,
+        to: null
+    });
+
+    const handleDateRangeChange = (dates: DayRange) => {
+        setFilters({
+            ...filters,
+            startDate: new Date(`${dates?.from?.day}-${dates?.from?.month}-${dates?.from?.year}`),
+            endDate: new Date(`${dates?.to?.day}-${dates?.to?.month}-${dates?.to?.year}`),
+        });
+
+        setDayRange(dates);
+    }
 
     const {
         isLoading,
@@ -21,23 +48,25 @@ export default function Home() {
         error,
         data: absences,
         isFetching
-    } = useAbsences(page);
-
-
+    } = useAbsences(page, 5, {
+        ...filters,
+        type: filters.type === 'all' ? null : filters.type
+    });
 
 
     return (
         <>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg px-3">
                 <div className="flex items-center justify-between py-4 bg-white dark:bg-gray-800">
-                    <div className="relative">
+                    <div className="relative md:w-1/3">
                         <button
+                            // onBlur={() => setFilterOpen(false)}
                             onClick={() => setFilterOpen(!filterOpen)}
-                            className="capitalize inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                            className="block p-2 w-4/5 capitalize inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             type="button">
                             <span className="sr-only">Action button</span>
                             {
-                                selectedFilterType === '' ? 'Type' : selectedFilterType
+                                filters.type
                             }
                             <svg className="w-3 h-3 ml-2" aria-hidden="true" fill="none" stroke="currentColor"
                                  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -52,9 +81,12 @@ export default function Home() {
                             <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                                 <li>
                                     {
-                                        filters.map((filter, index: number) => (
+                                        absence_types.map((filter, index: number) => (
                                             <a onClick={() => {
-                                                setSelectedFilterType(filter);
+                                                setFilters({
+                                                    ...filters,
+                                                    type: filter
+                                                });
                                                 setFilterOpen(false)
                                             }}
                                                key={`filter-${index}`}
@@ -64,6 +96,14 @@ export default function Home() {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+
+                    <div className="relative md:w-1/3">
+                        <DatePicker inputPlaceholder="Select period range"
+                                    value={dayRange}
+                                    onChange={handleDateRangeChange}
+                                    wrapperClassName="w-4/5"
+                                    inputClassName="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
 
                     <label htmlFor="table-search" className="sr-only">Search</label>
@@ -81,6 +121,7 @@ export default function Home() {
                                placeholder="Search for users"/>
                     </div>
                 </div>
+
                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -153,7 +194,7 @@ export default function Home() {
                 <div className="mt-3 flex items-center mb-10">
 
                     <button
-                        disabled={page===1 || isFetching}
+                        disabled={page === 1 || isFetching}
                         onClick={() => setPage(prevState => Math.max(prevState - 1, 0))}
                         className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"

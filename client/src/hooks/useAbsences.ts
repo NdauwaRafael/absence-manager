@@ -2,9 +2,11 @@ import {useInfiniteQuery, useQuery} from "react-query";
 import axios from "axios";
 import {endpoint} from "../config";
 
-export const useAbsences = (page= 1, pageSize=5)=>{
+export const useAbsences = (page= 1, pageSize=5, filters: any = null)=>{
+    const queryParams = new URLSearchParams(filters);
+
     return useQuery(['absences', page], async ()=>{
-        return axios.get(`${endpoint}/api/absences?page=${page}&pageSize=${pageSize}`)
+        return axios.get(`${endpoint}/api/absences?page=${page}&pageSize=${pageSize}&filters=${queryParams}`)
             .then(res=>res.data);
     }, { keepPreviousData : true, retry: 5  })
 }
