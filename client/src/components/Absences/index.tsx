@@ -154,7 +154,7 @@ export default function Home() {
                     </thead>
                     <tbody>
                     {
-                        absences?.data?.map((absence: any, index: number) => (
+                        absences?.data?.length > 0 ?  absences?.data?.map((absence: any, index: number) => (
                             <tr key={`absence-${index}-${absence.userId}`}
                                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row"
@@ -193,7 +193,14 @@ export default function Home() {
                                     }
                                 </td>
                             </tr>
-                        ))
+                        )) :
+                        <tr>
+                            <td colSpan={6}>
+                                <div className="text-gray-400 text-lg">
+                                    No Absences found! Empty!
+                                </div>
+                            </td>
+                        </tr>
                     }
                     </tbody>
                 </table>
@@ -214,7 +221,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => setPage(prevState => prevState + 1)}
-                        disabled={isFetching || page === absences.pages}
+                        disabled={isFetching || page === absences.pages || absences.total === 0}
                         className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Next
                         <svg aria-hidden="true" className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
