@@ -45,14 +45,13 @@ app.get('/api/absences', async (req: Request, res: Response) => {
         const data = await absences();
         const membersJson = await members();
         const membersMap = new Map(membersJson.map((member: any) => [member.userId, member]));
-
-        const { startDate, endDate, type }: IFilter = req.query;
-        const filtered = data.filter((d: any) => {
-            if (startDate && new Date(d.startDate) < new Date(startDate)) return false;
-            if (endDate && new Date(d.endDate) > new Date(endDate)) return false;
-            if (type && d.type !== type) return false;
+        const { startDate, endDate, type }: IFilter =  req.query;
+        const filtered = data.filter((d: any)=>{
+            if (startDate && new Date(d.startDate) <= new Date(startDate)) return false;
+            if (endDate && new Date(d.endDate) >= new Date(endDate)) return false;
+            if (type && type !== 'all' && d.type !== type) return false;
             return true;
-        });
+        })
         filtered.forEach((absence: any) => {
             absence.member = membersMap.get(absence.userId);
         });

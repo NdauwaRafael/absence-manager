@@ -1,14 +1,32 @@
 import {useInfiniteQuery, useQuery} from "react-query";
 import axios from "axios";
 import {endpoint} from "../config";
+import {useState} from "react";
 
-export const useAbsences = (page= 1, pageSize=5, filters: any = null)=>{
-    const queryParams = new URLSearchParams(filters);
+export const useAbsences = ()=>{
+    const [error, setError] = useState(null);
+    const [data, setData] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+    const getAbsences = async (page= 1, pageSize=10, filters: any = null,) => {
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams(filters);
+            const response = await axios.get(`${endpoint}/api/absences?page=${page}&pageSize=${pageSize}&${queryParams}`);
+            setData(response.data);
+            setLoading(false);
+        }
+        catch (e: any) {
+            setError(e);
+            setLoading(false);
+        }
+    }
 
-    return useQuery(['absences', page], async ()=>{
-        return axios.get(`${endpoint}/api/absences?page=${page}&pageSize=${pageSize}&filters=${queryParams}`)
-            .then(res=>res.data);
-    }, { keepPreviousData : true, retry: 5  })
+    return {
+        error,
+        data,
+        loading,
+        getAbsences
+    }
 }
 
 export const useAbsencesInfinite = () => {
@@ -19,7 +37,6 @@ export const useAbsencesInfinite = () => {
 
     return useInfiniteQuery('absences', fetchAbsences, {
         getNextPageParam: (lastPage, pages) => {
-            console.log(lastPage, "lastPage");
             return lastPage.info.page + 1
         }
     });

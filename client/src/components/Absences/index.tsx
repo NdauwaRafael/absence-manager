@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from "react";
+import React, {useState, Fragment, useEffect} from "react";
 import {useAbsences} from "../../hooks/useAbsences";
 import {truncateString} from "../../utils/helpers";
 import DatePicker, {DayValue, DayRange, Day} from '@hassanmojab/react-modern-calendar-datepicker';
@@ -25,34 +25,41 @@ export default function Home() {
     const [filters, setFilters] = useState<IFilter>({
         startDate: null,
         endDate: null,
-        type: 'all'
+        type: 'all',
     });
     const [dayRange, setDayRange] = useState<DayRange>({
         from: null,
         to: null
     });
 
-    const handleDateRangeChange = (dates: DayRange) => {
-        setFilters({
-            ...filters,
-            startDate: new Date(`${dates?.from?.day}-${dates?.from?.month}-${dates?.from?.year}`),
-            endDate: new Date(`${dates?.to?.day}-${dates?.to?.month}-${dates?.to?.year}`),
-        });
-
-        setDayRange(dates);
+    const datesFilters = (dates: DayRange) => {
+        const date = {
+            startDate: dates.to && dates.from ? new Date(`${dates?.from?.month}/${dates?.from?.day}/${dates?.from?.year}`).toISOString(): null,
+            endDate: dates.from && dates.to ? new Date(`${dates?.to?.month}/${dates?.to?.day}/${dates?.to?.year}`).toISOString(): null,
+        }
+        return date;
     }
 
     const {
-        isLoading,
-        isError,
+        loading: isFetching,
         error,
         data: absences,
-        isFetching
-    } = useAbsences(page, 5, {
-        ...filters,
-        type: filters.type === 'all' ? null : filters.type
-    });
+        getAbsences
+    } = useAbsences();
 
+    useEffect(()=>{
+        (async ()=>{
+            await getAbsences(page, 10 );
+        })();
+
+    }, []);
+
+    useEffect(()=>{
+        (async ()=>{
+            await getAbsences(page, 10, {...filters, ...datesFilters(dayRange)});
+        })();
+
+    }, [filters, dayRange, page])
 
     return (
         <>
@@ -60,7 +67,6 @@ export default function Home() {
                 <div className="flex items-center justify-between py-4 bg-white dark:bg-gray-800">
                     <div className="relative md:w-1/3">
                         <button
-                            // onBlur={() => setFilterOpen(false)}
                             onClick={() => setFilterOpen(!filterOpen)}
                             className="block p-2 w-4/5 capitalize inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             type="button">
@@ -101,7 +107,7 @@ export default function Home() {
                     <div className="relative md:w-1/3">
                         <DatePicker inputPlaceholder="Select period range"
                                     value={dayRange}
-                                    onChange={handleDateRangeChange}
+                                    onChange={setDayRange}
                                     wrapperClassName="w-4/5"
                                     inputClassName="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
