@@ -2,14 +2,6 @@ import React from 'react';
 import {render, fireEvent, screen, waitFor} from '@testing-library/react';
 import Home from './index';
 import axios from "axios";
-
-interface UseAbsencesResult {
-    loading: boolean;
-    error: any;
-    data: any[];
-    getAbsences: (page?: number, pageSize?: number, filters?: any) => Promise<void>;
-}
-
 jest.mock('axios', () => ({
     get: jest.fn(() => Promise.resolve({ data: {} })),
 }));
