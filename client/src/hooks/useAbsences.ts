@@ -1,4 +1,4 @@
-import {useInfiniteQuery, useQuery} from "react-query";
+import {useInfiniteQuery} from "react-query";
 import axios from "axios";
 import {endpoint} from "../config";
 import {useState} from "react";

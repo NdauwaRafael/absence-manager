@@ -3,7 +3,6 @@ import {useAbsences} from "../../hooks/useAbsences";
 import {truncateString} from "../../utils/helpers";
 import DatePicker, {DayValue, DayRange, Day} from '@hassanmojab/react-modern-calendar-datepicker';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import ListLoader from "../ListLoader";
 
 const absence_types = ['all', 'sickness', 'vacation'];
 
@@ -35,7 +34,7 @@ export default function Home() {
     }
 
     const {
-        loading: isFetching,
+        loading,
         error,
         data: absences,
         getAbsences
@@ -45,17 +44,15 @@ export default function Home() {
         (async ()=>{
             await getAbsences(page, 10 );
         })();
-
     }, []);
 
     useEffect(()=>{
         (async ()=>{
             await getAbsences(page, 10, {...filters, ...datesFilters(dayRange)});
         })();
-
     }, [filters, dayRange, page])
 
-    if (isFetching) return <><ListLoader /></>
+    // if (loading) return <><ListLoader /></>
     if (error) return <>Error: {error?.message}</>
 
     return (
@@ -64,6 +61,7 @@ export default function Home() {
                 <div className="flex items-center justify-between py-4 bg-white dark:bg-gray-800">
                     <div className="relative md:w-1/3">
                         <button
+                            data-testid="drop-menu-button"
                             onClick={() => setFilterOpen(!filterOpen)}
                             className="block p-2 w-4/5 capitalize inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             type="button">
@@ -78,7 +76,8 @@ export default function Home() {
                             </svg>
                         </button>
 
-                        <div className={
+
+                        <div data-testid="drop-down-menu" className={
                             `${filterOpen ? 'absolute' : 'hidden'} z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600`
                         }>
                             <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
@@ -92,6 +91,7 @@ export default function Home() {
                                                 });
                                                 setFilterOpen(false)
                                             }}
+                                               data-testid={filter}
                                                key={`filter-${index}`}
                                                className="capitalize block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{filter}</a>
                                         ))
@@ -102,11 +102,12 @@ export default function Home() {
                     </div>
 
                     <div className="relative md:w-1/3">
-                        <DatePicker inputPlaceholder="Select period range"
+                        <DatePicker data-testid="date-picker"
+                                    inputPlaceholder="Select period range"
                                     value={dayRange}
                                     onChange={setDayRange}
                                     wrapperClassName="w-4/5"
-                                    inputClassName="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                                    inputClassName="date-picker block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                     </div>
 
                     <label htmlFor="table-search" className="sr-only">Search</label>
@@ -208,7 +209,7 @@ export default function Home() {
                 <div className="mt-3 flex items-center mb-10">
 
                     <button
-                        disabled={page === 1 || isFetching}
+                        disabled={page === 1 || loading}
                         onClick={() => setPage(prevState => Math.max(prevState - 1, 0))}
                         className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 mr-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
@@ -221,7 +222,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => setPage(prevState => prevState + 1)}
-                        disabled={isFetching || page === absences.pages || absences.total === 0}
+                        disabled={loading || page === absences.pages || absences.total === 0}
                         className="disabled:opacity-30 cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                         Next
                         <svg aria-hidden="true" className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
