@@ -41,15 +41,11 @@ export default function Home() {
     } = useAbsences();
 
     useEffect(()=>{
-        (async ()=>{
-            await getAbsences(page, 10 );
-        })();
+        getAbsences(page, 10 );
     }, []);
 
     useEffect(()=>{
-        (async ()=>{
-            await getAbsences(page, 10, {...filters, ...datesFilters(dayRange)});
-        })();
+        getAbsences(page, 10, {...filters, ...datesFilters(dayRange)});
     }, [filters, dayRange, page])
 
     // if (loading) return <><ListLoader /></>
