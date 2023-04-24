@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f823d5d3-2001-4141-8c01-c7200870e7d4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/api/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RUNNING.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/api/yarn.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/Absences/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Absences/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/hooks/useAbsences.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/useAbsences.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/tailwind.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/client/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +29,7 @@
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "/Users/raphael/Code/others/challenges/crewmeister/frontend-coding-challenge",
     "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "/Users/raphael/Code/others/challenges/crewmeister/frontend-coding-challenge/api/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -46,6 +42,7 @@
       <option name="presentableId" value="Default" />
       <updated>1678285641585</updated>
       <workItem from="1678285642726" duration="22000" />
+      <workItem from="1682330139371" duration="892000" />
     </task>
     <servers />
   </component>

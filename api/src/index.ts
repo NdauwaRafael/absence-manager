@@ -59,7 +59,9 @@ app.get('/api/absences', async (req: Request, res: Response) => {
         res.status(200).send({
             data: filtered.slice(startIndex, endIndex),
             message: "Absences returned",
-            pages: Math.ceil(filtered.length/pageSize)
+            pages: Math.ceil(filtered.length/pageSize),
+            total: filtered.length,
+            overall: data.length
         })
     } catch (e: unknown) {
         const error = e as { message?: string; status?: number };
